@@ -1,0 +1,156 @@
+ATTENDANCE MANAGEMENT SYSTEM - SIMPLE POSTMAN API TESTING GUIDE
+
+Welcome! This guide explains how to test the Attendance Management System using Postman in simple, everyday language. You do not need any coding or technical background to follow along.
+
+
+WHAT IS POSTMAN AND WHAT ARE WE TESTING?
+
+Normally, people use a website by opening a browser like Chrome and clicking buttons. 
+
+Behind the scenes, the website talks to a backend system using "APIs" (Application Programming Interfaces). Postman is simply an app that lets us talk directly to that backend system to make sure that logging in, employee records, and daily attendance (check-in and check-out) are working properly.
+
+
+STEP 1: START THE SYSTEM ON YOUR COMPUTER
+
+Before opening Postman, make sure the project is running on your machine:
+
+1. Open your XAMPP Control Panel and start Apache and MySQL (both should show green).
+2. Open your terminal or Command Prompt, navigate to the project folder:
+   cd C:\xampp\htdocs\revise\attendance_management_system
+3. Start the project server by typing:
+   php artisan serve
+4. You will see a message saying:
+   Server running on [http://127.0.0.1:8000]
+
+Keep this terminal window open while testing.
+
+
+STEP 2: OPEN POSTMAN AND LOAD THE READY-MADE TESTS
+
+We have already created all the tests for you in a file named "postman_collection.json" in the project folder.
+
+To load it into Postman:
+1. Open the Postman application on your computer.
+2. Click the "Import" button located in the top-left area.
+3. Drag and drop the "postman_collection.json" file into Postman (or browse and select it).
+4. You will now see a collection on the left panel named:
+   "Employee & Attendance Management System API"
+
+Inside this collection, all tests are neatly organized into three folders:
+* Authentication (Login and Logout)
+* Employees (View and manage employee profiles)
+* Attendance (Punch in, punch out, and view records)
+
+
+STEP 3: READY-TO-USE DEMO ACCOUNTS
+
+You can test using any of the following accounts:
+
+Administrator Account:
+* Email: admin@example.com
+* Password: password123
+* What Admin can do: View all employees, delete employees, check in/out for any employee, and view all company attendance records.
+
+Regular Employee Accounts:
+* Rahul Sharma: rahul.sharma@example.com | Password: password123
+* Priya Patel:  priya.patel@example.com  | Password: password123
+* Amit Verma:   amit.verma@example.com   | Password: password123
+* Neha Gupta:   neha.gupta@example.com   | Password: password123
+* Vikas Singh:  vikas.singh@example.com  | Password: password123
+* What Employees can do: Punch their own attendance in and out, view their own profile, and check their own attendance history.
+
+Inactive Employee Account (For security testing):
+* Anjali Mehta: anjali.mehta@example.com | Password: password123
+* Note: This account is disabled. If you try to log in, the system will block access with a polite message.
+
+
+STEP 4: EASY STEP-BY-STEP TESTING WALKTHROUGH
+
+Follow these simple steps in order:
+
+
+1. Log In to the System
+* In Postman, click on "Authentication" -> "Login (Admin or Employee)".
+* Click the blue "Send" button on the right.
+* What happens: The system verifies the email and password, logs you in, and automatically saves a security pass (token) inside Postman.
+* What you will see: A green "200 OK" status with the message "Login successful."
+* Try logging in as an employee: Change the email in the Body box to "priya.patel@example.com" and click Send.
+
+
+2. View the Employee List
+* Click on "Employees" -> "Get Employees List".
+* Click "Send".
+* What you will see: A full list of company employees with their names, departments, mobile numbers, and job titles.
+* Tip: You can search for a specific name by typing in the "search" box under Params (for example: Rahul).
+
+
+3. View a Single Employee Profile
+* Click on "Employees" -> "Get Employee by ID".
+* Click "Send".
+* What you will see: Detailed profile information for that specific employee.
+* Privacy check: If you are logged in as an employee, you can only view your own profile. If you try to view another employee's profile, the system will protect their privacy and show: "Unauthorized. You can only view your own profile."
+
+
+4. Punch In for the Day (Attendance Check-In)
+* Click on "Attendance" -> "Attendance Check-In".
+* In the Body box, you can add an optional note like: "Arrived at office on time".
+* Click "Send".
+* What you will see: A green "201 Created" status confirming you have checked in for today with the exact time recorded.
+* Safety rule: If you click "Send" a second time, the system will stop you and say: "Already checked in today."
+
+
+5. Punch Out for the Day (Attendance Check-Out)
+* Click on "Attendance" -> "Attendance Check-Out".
+* In the Body box, you can add a note like: "Finished today's work".
+* Click "Send".
+* What you will see: A green "200 OK" status confirming you checked out. The system automatically calculates the total hours worked and sets your status:
+  * 8 hours or more: Present
+  * 4 to 8 hours: Half Day
+  * Less than 4 hours: Absent
+
+
+6. Check Attendance History
+* Click on "Attendance" -> "Get Attendance Records".
+* Click "Send".
+* What you will see: The calendar history of past check-ins, check-outs, and total hours.
+* If you are an Admin: You will see records for all employees across all departments.
+* If you are an Employee: You will only see your own personal attendance history.
+
+
+7. Delete an Employee (Admin Only)
+* Click on "Employees" -> "Delete Employee (Admin Only)".
+* Click "Send".
+* What you will see: If logged in as Admin, the employee is safely archived. If logged in as a normal employee, the system blocks the action and shows: "Unauthorized. Only administrators can delete employees."
+
+
+8. Log Out
+* Click on "Authentication" -> "Logout".
+* Click "Send".
+* What you will see: "Logged out successfully." The security pass is cancelled. If you try to view records now, the system asks you to log in first.
+
+
+WHAT DO THE STATUS NUMBERS MEAN?
+
+Whenever you click Send, Postman displays a status code number in the top-right corner of the response window:
+
+* 200 OK: Everything worked successfully!
+* 201 Created: A new record (like a Check-In) was created successfully.
+* 400 Bad Request: A business rule stopped the action (for example, trying to check in twice on the same day).
+* 401 Unauthorized: You need to log in first.
+* 403 Forbidden: You do not have permission for this action (for example, a regular employee trying to delete someone or view another person's private profile).
+* 404 Not Found: The item you requested does not exist.
+* 422 Validation Error: Some required information is missing (like leaving the password field blank).
+
+
+SIMPLE TROUBLESHOOTING
+
+Problem: Postman says "Could not send request" or "Connection refused".
+Solution: The local server is not running. Open your terminal and run "php artisan serve".
+
+Problem: The system says "Unauthenticated" (Error 401).
+Solution: You need to run the "Login" request first so Postman can get your security token.
+
+Problem: I want to reset all test data back to the beginning.
+Solution: In your terminal, run:
+php artisan migrate:fresh --seed
+This resets the database and puts all initial demo employees and records back in place.

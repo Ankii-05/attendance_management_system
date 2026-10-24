@@ -1,0 +1,140 @@
+Attendance Management System - Project Setup Guide
+
+Here is a quick and simple guide to set up and run this project on your local machine.
+
+Note: The .env file is already pre-configured and included inside this zip with the Application Key, database settings, and timezone. You do not need to create a new .env file!
+
+
+Prerequisites Needed
+Before starting, make sure you have the following installed on your computer:
+- PHP 8.2 or higher
+- Composer
+- MySQL (via XAMPP, WAMP, Laragon, or standalone MySQL)
+- Any modern web browser
+
+
+Step 1: Extract the Project
+Extract the zip file into your preferred workspace.
+For example, if you are using XAMPP:
+C:\xampp\htdocs\attendance_management_system
+
+
+Step 2: Open Terminal / Command Prompt
+Open your terminal (Command Prompt, PowerShell, or Git Bash) and navigate to the project directory:
+cd C:\xampp\htdocs\attendance_management_system
+
+
+Step 3: Install Dependencies
+Run this command to download and install all the required Laravel packages:
+composer install
+
+
+Step 4: Environment File (.env) - Already Included
+The .env file is already provided inside the project with:
+- Pre-generated Application Key (APP_KEY)
+- Database name set to: attendance_management_system
+- Timezone set to: Asia/Kolkata (IST)
+
+If your local MySQL uses the default XAMPP settings (username: root, no password), you do not need to touch the .env file at all!
+
+(Note: Only if your system hid the .env file during zip extraction, simply run: copy .env.example .env && php artisan key:generate)
+
+
+Step 5: Create Database in MySQL
+1. Open XAMPP Control Panel and start Apache and MySQL.
+2. Open phpMyAdmin in your browser:
+   http://localhost/phpmyadmin
+3. Create a new database named:
+   attendance_management_system
+
+
+Step 6: Run Migrations and Seeders
+Run this command in your terminal to create all database tables and populate sample demo data:
+php artisan migrate:fresh --seed
+
+What this command sets up for you automatically:
+- All database tables (users, departments, employees, attendance, etc.)
+- Soft delete support across all tables
+- Default admin account and company departments
+- Sample active and inactive employee accounts
+- Realistic historical attendance records for quick evaluation
+
+
+Step 7: Start the Local Development Server
+Run the built-in server:
+php artisan serve
+
+You will see:
+INFO  Server running on [http://127.0.0.1:8000].
+
+
+Step 8: Open in Browser
+Open your browser and visit:
+http://127.0.0.1:8000
+
+
+Demo Login Credentials
+
+Admin Account:
+- Email:    admin@example.com
+- Password: Password@123
+(Full access to the Admin Dashboard, Employee Management, Real-time Attendance Logs, and Absentee Reports)
+
+Employee Accounts:
+- Email:    rahul.sharma@example.com  | Password: Password@123
+- Email:    priya.patel@example.com   | Password: Password@123
+- Email:    amit.verma@example.com    | Password: Password@123
+- Email:    vikas.singh@example.com   | Password: Password@123
+- Email:    neha.gupta@example.com    | Password: Password@123
+(Access to the Employee Self-Service Dashboard for Check-In, Check-Out, and Attendance History)
+
+Note: For convenience, passwords also accept "password123".
+
+
+How Attendance & Shift Hours Work
+- Standard Shift: 8 Hours.
+- Check-In & Check-Out: Employees record attendance themselves directly from their dashboard.
+- Attendance Status Rules:
+  * Less than 4 hours worked:   Marked as Absent
+  * Between 4 and 8 hours:      Marked as Half Day
+  * 8 hours or more:            Marked as Present
+- Soft Deletes: Deleted employees and records are safely preserved in the database using soft deletes. The admin dashboard only shows active (non-deleted) records.
+
+
+Running Automated Tests
+The application includes a complete automated test suite (33 feature and unit tests with 134 assertions).
+To run all tests:
+php artisan test
+(or: vendor\bin\pest)
+
+
+API Testing with Postman
+A pre-configured Postman Collection is included directly in the project root:
+File: postman_collection.json
+
+How to test the APIs:
+1. Open Postman, click Import, and choose the "postman_collection.json" file.
+2. Send the "POST /api/login" request to get your Bearer token.
+3. Postman automatically stores the token in the {{token}} variable to test protected endpoints:
+   - GET  /api/employees
+   - GET  /api/employees/{id}
+   - POST /api/attendance/check-in
+   - POST /api/attendance/check-out
+   - GET  /api/attendance
+   - DELETE /api/employees/{id}
+
+For a comprehensive walkthrough of every endpoint, test scenario, role permission, and payload, please refer to:
+File: POSTMAN_API_TESTING_GUIDE.txt
+
+
+Helpful Commands & Troubleshooting
+- If you update your .env file or timezone:
+  php artisan config:clear
+  php artisan cache:clear
+
+- If you want to reset the database fresh anytime:
+  php artisan migrate:fresh --seed
+
+- If blade views or routes need refreshing:
+  php artisan view:clear
+  php artisan route:clear
